@@ -1,0 +1,40 @@
+name: Verify live website
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/verify-live.yml
+      - tests/live_site_check.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-live-website
+  cancel-in-progress: true
+
+jobs:
+  live-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Install isolated browser testing tools
+        run: |
+          python3 -m venv /tmp/shipping-live-check
+          /tmp/shipping-live-check/bin/pip install --disable-pip-version-check playwright==1.57.0
+          /tmp/shipping-live-check/bin/playwright install --with-deps chromium
+      - name: Check public HTTPS pages and real browser calculations
+        run: /tmp/shipping-live-check/bin/python tests/live_site_check.py
+      - name: Keep results and live screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: live-website-verification
+          path: live-check-results/
+          retention-days: 7
+          if-no-files-found: warn
