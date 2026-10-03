@@ -15,7 +15,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.request import Request, urlopen
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 BASE = 'https://shipping-cost-optimizer-xiaoqiu3000.onrender.com'
 OUT = Path('live-check-results')
@@ -207,10 +207,10 @@ def clipboard(page):
     navigate(page, '/')
     submit(page)
     page.locator('#copy').click()
-    page.wait_for_function("document.getElementById('export-status').textContent.length > 0")
+    # Use a locator assertion, not string evaluation blocked by strict CSP.
+    expect(page.locator('#export-status')).to_have_text('Report copied.')
     status = page.locator('#export-status').inner_text()
-    assert status == 'Report copied.', status
-    text = page.evaluate('navigator.clipboard.readText()')
+    text = page.evaluate('() => navigator.clipboard.readText()')
     assert '25% less' in text
     return status
 
