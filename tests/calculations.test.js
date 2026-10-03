@@ -1,0 +1,42 @@
+'use strict';
+const {test} = require('node:test');
+const assert = require('node:assert/strict');
+const C = require('../public/calculations.js');
+const close = (a,b) => assert.ok(Math.abs(a-b) <= 1e-9*Math.max(1,Math.abs(b)),a+' != '+b);
+const base = {current:[40,30,20],proposed:[40,30,15],actual:1.5,divisor:5000,shipments:800};
+test('metric DIM example',()=>close(C.dimWeight([40,30,20],5000),4.8));
+test('imperial DIM example',()=>close(C.dimWeight([16,12,8],139),1536/139));
+test('dimension rounding is explicit',()=>close(C.dimWeight([10.1,20.2,30.3],5000,true),11*21*31/5000));
+test('actual weight dominates',()=>assert.equal(C.chargeable(10,4.8),10));
+test('dimensional weight dominates',()=>assert.equal(C.chargeable(2,4.8),4.8));
+test('round to whole unit',()=>assert.equal(C.chargeable(2,4.8,1),5));
+test('round to half unit',()=>assert.equal(C.chargeable(2,4.2,0.5),4.5));
+test('floating-point boundary is stable',()=>assert.equal(C.roundUp(0.1+0.2,0.1),0.3));
+test('tiny positive values still round up',()=>assert.equal(C.roundUp(1e-16,1),1));
+test('zero weight is supported',()=>assert.equal(C.chargeable(0,0,1),0));
+test('metric CBM',()=>close(C.cbm([40,30,20],10,'cm'),0.24));
+test('imperial CBM converts inches',()=>close(C.cbm([12,12,12],1,'in'),0.028316846592));
+test('positive packaging reduction',()=>{const r=C.compare(base);close(r.percent,25);close(r.monthlyWeight,960);assert.equal(r.monthlyCost,null);});
+test('linear cost model',()=>close(C.compare({...base,rate:6.5}).monthlyCost,6240));
+test('larger packaging reports an increase, not zero savings',()=>{const r=C.compare({...base,proposed:[40,30,30],rate:6.5});assert.ok(r.difference<0);assert.ok(r.monthlyCost<0);});
+test('actual weight can eliminate the benefit',()=>assert.equal(C.compare({...base,actual:9}).difference,0));
+test('billing increment can eliminate the benefit',()=>assert.equal(C.compare({...base,current:[40,30,20],proposed:[40,30,19],increment:1}).difference,0));
+test('zero monthly shipments are allowed',()=>assert.equal(C.compare({...base,shipments:0,rate:4}).monthlyCost,0));
+test('zero rate is not treated as missing',()=>assert.equal(C.compare({...base,rate:0}).monthlyCost,0));
+for (const bad of ['', ' ', -1, NaN, Infinity, 'abc', true, null]) test('reject invalid divisor '+String(bad),()=>assert.throws(()=>C.dimWeight([40,30,20],bad)));
+test('reject zero divisor',()=>assert.throws(()=>C.dimWeight([40,30,20],0)));
+test('reject zero dimensions',()=>assert.throws(()=>C.dimWeight([0,30,20],5000)));
+test('reject missing dimension',()=>assert.throws(()=>C.dimWeight([40,30],5000)));
+test('reject negative actual weight',()=>assert.throws(()=>C.chargeable(-1,4)));
+test('reject negative rounding',()=>assert.throws(()=>C.roundUp(3,-1)));
+test('reject fractional carton count',()=>assert.throws(()=>C.cbm([40,30,20],1.2)));
+test('reject zero carton count',()=>assert.throws(()=>C.cbm([40,30,20],0)));
+test('reject unknown unit',()=>assert.throws(()=>C.cbm([40,30,20],1,'mm')));
+test('reject fractional shipment count',()=>assert.throws(()=>C.compare({...base,shipments:1.5})));
+test('reject negative rate',()=>assert.throws(()=>C.compare({...base,rate:-1})));
+test('100 deterministic comparisons obey bounds and rounding',()=>{
+  for(let i=1;i<=100;i++){
+    const actual=i/7;const r=C.compare({current:[20+i,30,20],proposed:[20+i,30,15],actual,divisor:5000,increment:0.5,shipments:10});
+    assert.ok(r.before>=actual && r.after>=actual);assert.ok(r.difference>=0);close(r.before*2,Math.round(r.before*2));
+  }
+});

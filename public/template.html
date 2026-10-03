@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>@@TITLE@@</title><meta name="description" content="@@DESCRIPTION@@">
+<meta name="theme-color" content="#146b55">@@CANONICAL@@
+<link rel="stylesheet" href="@@BASE@@style.css">
+<script src="@@BASE@@calculations.js" defer></script><script src="@@BASE@@app.js" defer></script>
+</head>
+<body data-tool="@@TOOL@@">
+<a class="skip" href="#main">Skip to calculator</a>
+<header class="top"><div class="wrap"><a class="brand" href="@@BASE@@index.html"><span aria-hidden="true">↗</span>Shipping Cost Optimizer</a><small>Free tools. Clear assumptions.</small></div></header>
+<main id="main" class="wrap">
+<section class="hero"><span class="eyebrow">LESS EMPTY SPACE · BETTER SHIPPING DECISIONS</span><h1>@@HEADING@@</h1><p class="intro">@@DESCRIPTION@@</p></section>
+<nav class="tabs" aria-label="Shipping calculators"><a data-nav="pack" href="@@BASE@@packaging-optimizer/">Packaging optimizer</a><a data-nav="dim" href="@@BASE@@dim-weight-calculator/">DIM weight</a><a data-nav="charge" href="@@BASE@@chargeable-weight-calculator/">Chargeable weight</a><a data-nav="cbm" href="@@BASE@@cbm-calculator/">CBM / volume</a></nav>
+<noscript><p class="noscript">Enable JavaScript to run the calculator. The formula and calculation limits are available below.</p></noscript>
+<div class="workspace">
+<section class="panel"><div class="panel-head"><h2>Your shipment</h2><label class="unit-control" for="units">Measurement units<select id="units"><option value="metric">cm / kg</option><option value="imperial">in / lb</option></select></label></div><p class="small" id="unit-note">Use the outside dimensions of the packed carton.</p><form id="calculator"></form><p id="error" class="error" role="alert"></p></section>
+<aside class="panel result-panel" aria-label="Calculation result"><div id="result" aria-live="polite" aria-atomic="true"></div><div class="export"><button type="button" id="copy" disabled>Copy report</button><button type="button" id="download" disabled>Download report</button></div><div id="export-status" role="status"></div></aside>
+</div>
+<section class="panel explain"><div><h2>How this calculation works</h2><p class="formula">@@FORMULA@@</p><p>@@EXPLANATION@@</p><p>For an official example of dimension measurement and service-specific divisors, see <a href="https://www.fedex.com/en-my/customer-support/faq/invoices-and-payments/fees-and-charges/calculate-dimensional-weight.html" rel="noopener noreferrer" target="_blank">FedEx's dimensional-weight guidance</a>. A regional example is not a universal tariff.</p></div><div><h2>Estimate, not a carrier quote</h2><p>Confirm your service, route, contract, measurement rules and billing increments. This calculator does not retrieve live rates, determine freight class, check container fit, or account for every surcharge.</p><p>A smaller proposed carton must still fit the product and protective material. The comparison assumes actual weight stays the same. Cost results use your own linear rate, not an advertised saving.</p><details class="privacy"><summary>Privacy &amp; independence</summary><p>Calculator inputs stay in this browser. There are no third-party scripts, accounts, payment forms, analytics events or advertising cookies. Your hosting provider may process normal website access logs. Copying or downloading saves the report on your device.</p><p>This independent tool is not affiliated with any carrier. The source link is not an affiliate link.</p></details></div></section>
+<footer class="footer"><span>Shipping Cost Optimizer · Independent calculation tools</span><span>v0.2 · No AI API needed</span></footer>
+</main></body></html>

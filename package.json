@@ -1,0 +1,11 @@
+{
+  "name": "shipping-cost-optimizer",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Local-first shipping and packaging calculators",
+  "scripts": {
+    "test": "node --test tests/calculations.test.js",
+    "build": "node build.js"
+  },
+  "engines": { "node": ">=22" }
+}
