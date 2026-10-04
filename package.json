@@ -1,11 +1,11 @@
 {
   "name": "shipping-cost-optimizer",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
-  "description": "Local-first shipping and packaging calculators",
+  "description": "Free local-first shipping calculators; display-ad monetization preparation",
   "scripts": {
-    "test": "node --test tests/calculations.test.js tests/seo.test.js",
-    "build": "node build.js && node seo.js"
+    "test": "node --test tests/calculations.test.js tests/seo.test.js tests/ads.test.js",
+    "build": "node build.js && node seo.js && node monetization.js"
   },
   "engines": { "node": ">=22" }
 }

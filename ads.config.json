@@ -1,0 +1,6 @@
+{
+  "model": "display-ads",
+  "provider": "google-adsense",
+  "mode": "off",
+  "publisherId": ""
+}
